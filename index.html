@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بنك أسئلة التشريح - Dr Adel Elhawary</title>
+    <style>
+        :root {
+            --color-primary: #2180a0;
+            --color-primary-hover: #1a6a8a;
+            --color-success: #27ae60;
+            --color-error: #e74c3c;
+            --color-bg: #f8f9fa;
+            --color-surface: #ffffff;
+            --color-text: #2c3e50;
+            --color-border: #ecf0f1;
+            --font-base: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-base);
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2180a0 0%, #1a6a8a 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+        /* Statistics Section */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-box {
+            background: var(--color-surface);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+            border-top: 4px solid var(--color-primary);
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: var(--color-primary);
+            margin: 10px 0;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+
+        /* Search and Filters */
+        .controls-section {
+            background: var(--color-surface);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--color-border);
+            border-radius: 8px;
+            font-size: 1em;
+            margin-bottom: 15px;
+            font-family: var(--font-base);
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 5px rgba(33, 128, 160, 0.3);
+        }
+
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .filter-btn {
+            padding: 10px 16px;
+            border: 2px solid var(--color-border);
+            background: white;
+            color: var(--color-text);
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+        }
+
+        .filter-btn.active {
+            background: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+        }
+
+        /* Questions Grid */
+        .questions-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .question-card {
+            background: var(--color-surface);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+            border: 1px solid var(--color-border);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .question-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.12);
+        }
+
+        .question-card.answered {
+            background: #f0f8ff;
+        }
+
+        .question-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+            background: var(--color-primary);
+            color: white;
+            border-radius: 50%;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .question-meta {
+            font-size: 0.85em;
+            color: #7f8c8d;
+            margin-bottom: 10px;
+        }
+
+        .question-text-en {
+            font-size: 1.05em;
+            font-weight: 500;
+            margin: 12px 0 8px 0;
+            color: var(--color-text);
+        }
+
+        .question-text-ar {
+            font-size: 0.95em;
+            color: #555;
+            margin-bottom: 15px;
+            font-style: italic;
+            padding: 10px;
+            background: #f9f9f9;
+            border-right: 3px solid var(--color-primary);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .option {
+            padding: 12px;
+            border: 2px solid var(--color-border);
+            border-radius: 8px;
+            cursor: pointer;
+            background: white;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+            text-align: right;
+        }
+
+        .option:hover:not(.disabled) {
+            border-color: var(--color-primary);
+            background: #f0f8ff;
+        }
+
+        .option.correct {
+            background: #d4edda;
+            border-color: var(--color-success);
+            color: #155724;
+            font-weight: 500;
+        }
+
+        .option.incorrect {
+            background: #f8d7da;
+            border-color: var(--color-error);
+            color: #721c24;
+            font-weight: 500;
+        }
+
+        .option.disabled {
+            cursor: not-allowed;
+        }
+
+        .explanation-box {
+            margin-top: 15px;
+            padding: 12px;
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            border-radius: 4px;
+            font-size: 0.95em;
+            color: #333;
+            display: none;
+        }
+
+        .explanation-box.show {
+            display: block;
+        }
+
+        .explanation-label {
+            font-weight: bold;
+            color: #856404;
+            margin-bottom: 5px;
+        }
+
+        .explanation-text {
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .result-message {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .result-message.correct-msg {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+
+        .result-message.incorrect-msg {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+
+        .no-questions {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+            font-size: 1.1em;
+        }
+
+        @media (max-width: 768px) {
+            .questions-container {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-buttons {
+                justify-content: flex-start;
+                overflow-x: auto;
+                padding-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>بنك أسئلة التشريح</h1>
+        <h2>Anatomy Question Bank</h2>
+        <p>Dr. Adel Elhawary</p>
+        <p>MCQ Bank for Paramedical Students 2024-2025</p>
+    </div>
+
+    <div class="container">
+        <!-- Statistics Section -->
+        <div class="stats-container">
+            <div class="stat-box">
+                <div class="stat-label">إجمالي الأسئلة</div>
+                <div class="stat-label">Total Questions</div>
+                <div class="stat-number" id="totalQuestions">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">تمت الإجابة</div>
+                <div class="stat-label">Answered</div>
+                <div class="stat-number" id="answeredCount">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">الإجابات الصحيحة</div>
+                <div class="stat-label">Correct</div>
+                <div class="stat-number" id="correctCount">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">نسبة النجاح</div>
+                <div class="stat-label">Success Rate</div>
+                <div class="stat-number" id="successRate">0%</div>
+            </div>
+        </div>
+
+        <!-- Search and Filters -->
+        <div class="controls-section">
+            <input type="text" class="search-box" id="searchInput" placeholder="ابحث عن سؤال... / Search for questions...">
+            
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">الكل / All</button>
+                <button class="filter-btn" data-filter="Group A">Group A</button>
+                <button class="filter-btn" data-filter="Group B">Group B</button>
+                <button class="filter-btn" data-filter="Group C">Group C</button>
+                <button class="filter-btn" data-filter="Group D">Group D</button>
+            </div>
+        </div>
+
+        <!-- Questions Container -->
+        <div class="questions-container" id="questionsContainer"></div>
+    </div>
+
+    <script>
+        // All questions data
+        const allQuestions = [
+            {id: 1, part: "Group A", category: "Anatomical Position", en: "In Anatomical Position", ar: "في الوضعية التشريحية القياسية", options: ["The face upwards, Arms along the sides and Palms facing forwards.", "The face forward, Arms along the sides and Palms facing backwards.", "The face forward, Arms along the sides and Palms facing forwards.", "The face forward, Arms together and Palms facing forwards."], correct: 2, explanation: "الوضعية التشريحية: الوجه للأمام، الذراعان بجانب الجسم، الكفان يواجهان للأمام."},
+            {id: 2, part: "Group A", category: "Planes", en: "Midsagittal plane is", ar: "المستوى السهمي الأوسط هو", options: ["Vertical plane dividing the body into equal right and left halves.", "Vertical plane dividing the body into unequal right and left parts.", "Vertical plane dividing the body into unequal anterior and posterior parts.", "Vertical plane dividing the body into upper and lower halves."], correct: 0, explanation: "المستوى السهمي الأوسط يقسم الجسم إلى نصفين متساويين أيمن وأيسر."},
+            {id: 3, part: "Group A", category: "Planes", en: "Parasagittal planes", ar: "المستويات السهمية الجانبية", options: ["Vertical plane dividing the body into equal right and left halves.", "Vertical plane dividing the body into unequal right and left parts.", "Vertical plane dividing the body into unequal anterior and posterior parts.", "Vertical plane dividing the body into upper and lower halves."], correct: 1, explanation: "المستويات السهمية الجانبية تقسم الجسم إلى أجزاء غير متساوية."},
+            {id: 4, part: "Group A", category: "Planes", en: "Coronal plane", ar: "المستوى التاجي", options: ["Vertical plane dividing the body into equal right and left halves.", "Vertical plane dividing the body into unequal right and left parts.", "Vertical plane dividing the body into unequal anterior and posterior parts.", "Transverse plane dividing the body into unequal upper and lower parts."], correct: 2, explanation: "المستوى التاجي يقسم الجسم إلى أجزاء أمامية وخلفية غير متساوية."},
+            {id: 5, part: "Group A", category: "Planes", en: "Transverse plane", ar: "المستوى المستعرض", options: ["Vertical plane dividing the body into unequal right and left parts.", "Vertical plane dividing the body into unequal anterior and posterior parts.", "Horizontal plane dividing the body into unequal upper and lower parts.", "Horizontal plane dividing the body into equal right and left halves."], correct: 2, explanation: "المستوى المستعرض مستوى أفقي يقسم الجسم إلى أجزاء عليا وسفلى."},
+            {id: 6, part: "Group A", category: "Anatomical Position", en: "Which of the following positions describes anatomical position?", ar: "أي من المواضع التالية يصف الوضعية التشريحية؟", options: ["Standing erect.", "Curled into a ball, as a baby in the uterus.", "Sitting comfortably with your hands on your knees.", "Lying on one's side."], correct: 0, explanation: "الوضعية التشريحية تعني الوقوف بشكل مستقيم."},
+            {id: 7, part: "Group A", category: "Anatomical Position", en: "The following is a feature of the anatomical position:", ar: "من خصائص الوضعية التشريحية:", options: ["Palms of the hands directed medially.", "Facing laterally.", "Ankles are apart.", "Upper limbs are by side, and the palms facing forward."], correct: 3, explanation: "في الوضعية التشريحية، الأطراف العليا بجانب الجسم والكفان يواجهان للأمام."},
+            {id: 8, part: "Group A", category: "Planes", en: "The vertical plane that divided the body into anterior and posterior parts is:", ar: "المستوى الرأسي الذي يقسم الجسم إلى أجزاء أمامية وخلفية:", options: ["Sagittal", "Horizontal", "Parasagittal", "Coronal"], correct: 3, explanation: "المستوى التاجي يقسم الجسم إلى أجزاء أمامية (anterior) وخلفية (posterior)."},
+            {id: 9, part: "Group A", category: "Planes", en: "Regarding the anatomical planes, choose the correct answer:", ar: "بخصوص المستويات التشريحية، اختر الإجابة الصحيحة:", options: ["Sagittal plane divides body into anterior and posterior halves.", "Coronal plane is a horizontal plane.", "Parasagittal plane is perpendicular to median plane.", "Coronal plane divides body into anterior and posterior parts."], correct: 3, explanation: "المستوى التاجي يقسم الجسم إلى أجزاء أمامية وخلفية."},
+            {id: 10, part: "Group A", category: "Planes", en: "The plane which passes through the midline of the body, dividing it into right and left halves.", ar: "المستوى الذي يمر عبر الخط الأوسط للجسم، يقسمه إلى نصفين أيمن وأيسر.", options: ["Coronal", "Midsagittal", "Parasagittal", "Transverse"], correct: 1, explanation: "المستوى السهمي الأوسط يقسم الجسم إلى نصفين متساويين."},
+            {id: 11, part: "Group A", category: "Movements", en: "Regarding the movements, the correct statement is:", ar: "بخصوص الحركات، العبارة الصحيحة هي:", options: ["Adduction: Movement away from the midline of the body.", "Flexion: Increase the angle between two bones.", "Pronation: Upward or palm upward.", "Lateral flexion: Bending a part of the body in coronal plane."], correct: 3, explanation: "الانحناء الجانبي هو ثني جزء من الجسم في المستوى التاجي."},
+            {id: 12, part: "Group A", category: "Anatomical Terms", en: "The anatomical term Superficial means", ar: "المصطلح التشريحي 'سطحي' يعني", options: ["A point which is nearer to the front of the body.", "A point which is nearer to the back of the body.", "A point which is nearer to the mid-sagittal plane.", "A point which is nearer to the surface of the body."], correct: 3, explanation: "السطحي: نقطة أقرب إلى سطح الجسم."},
+            {id: 13, part: "Group A", category: "Skin", en: "Hairs are present over the whole surface of the body except:", ar: "الشعر موجود على كل سطح الجسم ما عدا:", options: ["Scalp.", "Face.", "Palms of hands.", "Skin of chest."], correct: 2, explanation: "الشعر غير موجود على راحة اليد وباطن القدم."},
+            {id: 14, part: "Group A", category: "Skin Glands", en: "Sebaceous Glands", ar: "الغدد الدهنية", options: ["Are few in the scalp.", "Are abundant in palms and soles.", "Consist of a single coiled tube lying deep in the dermis.", "Secrete a fatty material called sebum."], correct: 3, explanation: "الغدد الدهنية تفرز مادة دهنية تسمى الزهم."},
+            {id: 15, part: "Group A", category: "Skeleton", en: "An example of a girdle bone is:", ar: "مثال على عظم الحزام:", options: ["Hip bone.", "Humerus.", "Femur.", "Metacarpal bone."], correct: 0, explanation: "عظم الحوض مثال على عظام الأحزمة."},
+            {id: 16, part: "Group A", category: "Skeleton", en: "An example of axial bone is:", ar: "مثال على عظم محوري:", options: ["Hip bone.", "Humerus.", "Femur.", "Sternum."], correct: 3, explanation: "عظم الصدر (الضلع) عظم محوري ينتمي للهيكل العظمي المحوري."},
+            {id: 17, part: "Group A", category: "Bones Classification", en: "The maxilla is considered:", ar: "الفك العلوي يعتبر:", options: ["Long bone.", "Irregular bone.", "Flat bone.", "Pneumatic bone."], correct: 3, explanation: "الفك العلوي عظم رئوي يحتوي على حجيرات هوائية."},
+            {id: 18, part: "Group A", category: "Skeleton", en: "The following bone is a part of the appendicular skeleton:", ar: "العظم التالي جزء من الهيكل العظمي الطرفي:", options: ["Skull.", "Ribs.", "Vertebrae.", "Scapula."], correct: 3, explanation: "لوح الكتف (الكتف) جزء من الهيكل العظمي الطرفي."},
+            {id: 19, part: "Group A", category: "Skeleton Functions", en: "Which of these is a normal function of the skeleton?", ar: "أي من هذه وظيفة عادية للهيكل العظمي؟", options: ["Mineral and glycogen storage.", "Protection of underlying tissues.", "Formation of proteins.", "Regulation of body temperature."], correct: 1, explanation: "الهيكل العظمي يحمي الأنسجة والأعضاء الداخلية."},
+            {id: 20, part: "Group A", category: "Skeleton Functions", en: "Besides support and protection, the skeleton serves other important functions, including", ar: "بالإضافة إلى الدعم والحماية، الهيكل العظمي يوفر وظائف مهمة أخرى", options: ["Reproduction.", "Locomotion.", "Respiration.", "Circulation."], correct: 1, explanation: "الهيكل العظمي يساهم في الحركة واللوكوموشن."},
+            {id: 21, part: "Group A", category: "Bones Classification", en: "Examples of bones classification according to their shape, choose the correct:", ar: "أمثلة على تصنيف العظام حسب شكلها، اختر الصحيح:", options: ["Femur (pneumatic bone).", "Tarsal bones (short bone).", "Scapula (irregular).", "Patella (flat bone)."], correct: 1, explanation: "عظام الرسغ (السنع) تعتبر عظام قصيرة."},
+            {id: 22, part: "Group A", category: "Skeleton Functions", en: "Concerning the bones the following are correct EXCEPT", ar: "فيما يتعلق بالعظام، ما يلي صحيح ما عدا", options: ["Give the shape of the body.", "Carry the blood and nerve supply to the muscles.", "Contain bone marrow.", "Give attachment to the muscles."], correct: 1, explanation: "العظام لا تحمل الإمداد الدموي والعصبي للعضلات بشكل مباشر."},
+            {id: 23, part: "Group A", category: "Anatomical Terms", en: "Which term describes the position of the radius bone to the ulna:", ar: "أي مصطلح يصف موضع العظم الكعبري بالنسبة للزند:", options: ["Lateral.", "Distal.", "Anterior.", "Proximal."], correct: 0, explanation: "العظم الكعبري يقع جانبياً بالنسبة للزند."},
+            {id: 24, part: "Group A", category: "Joints", en: "Regarding the primary cartilaginous joints choose the correct statement:", ar: "بخصوص المفاصل الغضروفية الأولية، اختر العبارة الصحيحة:", options: ["Ossify by age.", "The intervening cartilage is elastic.", "All are quite mobile.", "Superior radio-ulnar joint is an example."], correct: 0, explanation: "المفاصل الغضروفية الأولية تتحول إلى عظام مع تقدم العمر."},
+            {id: 25, part: "Group A", category: "Joints", en: "An example of secondary cartilaginous joints is:", ar: "مثال على المفاصل الغضروفية الثانوية:", options: ["Sagittal suture of the skull.", "Intervertebral joints.", "Inferior tibio-fibular joint.", "Knee joint."], correct: 1, explanation: "المفاصل بين الفقرات (intervertebral joints) مفاصل غضروفية ثانوية."},
+            {id: 26, part: "Group A", category: "Joints", en: "The shoulder joint is:", ar: "مفصل الكتف هو:", options: ["Fibrous.", "Cartilaginous.", "Biaxial.", "Polyaxial."], correct: 3, explanation: "مفصل الكتف متعدد المحاور (polyaxial)."},
+            {id: 27, part: "Group A", category: "Joints", en: "Syndemosis is", ar: "الالتحام الليفي هو", options: ["Fibrous joint.", "Primary cartilagenous joint.", "Secondary cartilaginous joint.", "Synovial plane Joint."], correct: 0, explanation: "الالتحام الليفي (Syndesmosis) هو مفصل ليفي."},
+            {id: 28, part: "Group A", category: "Joints", en: "Concerning ball and socket joint, all are true EXCEPT", ar: "فيما يتعلق بمفصل الكرة والتجويف، جميع العبارات صحيحة ما عدا", options: ["It is a synovial joint.", "Allows movements in different directions.", "Articular surfaces are concavo-convex.", "Shoulder joint is an example."], correct: 2, explanation: "السطوح المفصلية في مفصل الكرة والتجويف تكون كروية الشكل."},
+            {id: 29, part: "Group A", category: "Cartilage", en: "The type of cartilage found in intervertebral discs is", ar: "نوع الغضروف الموجود في الأقراص بين الفقرات", options: ["Hyaline cartilage.", "Elastic cartilage.", "Costal cartilage.", "Fibrocartilage."], correct: 3, explanation: "الأقراص بين الفقرات تحتوي على غضروف ليفي."},
+            {id: 30, part: "Group A", category: "Joints", en: "The Following is cartilaginous joint:", ar: "ما يلي هو مفصل غضروفي:", options: ["Sagittal suture.", "Gomphosis.", "Pubic symphysis.", "Syndesmosis."], correct: 2, explanation: "مفصل العانة (symphysis pubis) مفصل غضروفي ثانوي."},
+            {id: 31, part: "Group A", category: "Joints", en: "Regarding the saddle joint, one of the following is true:", ar: "فيما يتعلق بمفصل السرج، أحد العبارات التالية صحيحة:", options: ["It is a fibrous joint.", "Articular surfaces are concave.", "It is a cartilaginous joint.", "The carpometacarpal joint of the thumb is an example."], correct: 3, explanation: "مفصل الإبهام المشطي السرجي مثال على مفصل السرج."},
+            {id: 32, part: "Group A", category: "Joints", en: "Regarding the primary cartilaginous joints choose the correct:", ar: "بخصوص المفاصل الغضروفية الأولية، اختر الصحيح:", options: ["The intervening cartilage is elastic.", "Ultimately ossify.", "All are quite mobile.", "Superior radio-ulnar joint is an example."], correct: 1, explanation: "المفاصل الغضروفية الأولية تتحول إلى عظام في النهاية."},
+            {id: 33, part: "Group A", category: "Joints", en: "The inferior tibio-fibular joint is an example of:", ar: "مفصل الظنبوب والشظية السفلي مثال على:", options: ["Fibrous joint.", "Plane synovial joint.", "Uniaxial synovial joint.", "Cartilaginous joint."], correct: 0, explanation: "مفصل الظنبوب والشظية السفلي مفصل ليفي."},
+            {id: 34, part: "Group A", category: "Joints", en: "An example of syndesmosis is:", ar: "مثال على الالتحام الليفي:", options: ["Sagittal suture of the skull.", "Intervertebral joints.", "Inferior tibio-fibular joint.", "Knee joint."], correct: 2, explanation: "مفصل الظنبوب والشظية السفلي مثال على الالتحام الليفي."},
+            {id: 35, part: "Group A", category: "Joints", en: "Elbow joint is an examples of:", ar: "مفصل الكوع مثال على:", options: ["Fibrous joint.", "Plane synovial joint.", "Uniaxial synovial joint.", "Biaxial synovial joint."], correct: 2, explanation: "مفصل الكوع مفصل زلالي أحادي المحور."},
+            {id: 36, part: "Group A", category: "Joints", en: "An example of secondary cartilaginous joints is:", ar: "مثال على المفاصل الغضروفية الثانوية:", options: ["Sagittal suture of the skull.", "Intervertebral joints.", "Inferior tibio-fibular joint.", "Knee joint."], correct: 1, explanation: "المفاصل بين الفقرات مفاصل غضروفية ثانوية."},
+            {id: 37, part: "Group A", category: "Joints", en: "The shoulder joint is:", ar: "مفصل الكتف هو:", options: ["Fibrous.", "Cartilaginous.", "Uniaxial.", "Polyaxial."], correct: 3, explanation: "مفصل الكتف متعدد المحاور."},
+            {id: 38, part: "Group A", category: "Joints", en: "An injury to the elbow joint will affect, which movement of it:", ar: "إصابة مفصل الكوع ستؤثر على أي حركة:", options: ["Extension.", "Supination.", "Pronation.", "Medial rotation."], correct: 0, explanation: "الإصابة قد تؤثر على مد (extension) المفصل."},
+            {id: 39, part: "Group A", category: "Joints", en: "Regarding the carpo-metacarpal joint of the thumb, its type is:", ar: "بخصوص مفصل الإبهام المشطي، نوعه:", options: ["Hinge joint.", "Condyloid joint.", "Saddle joint.", "Ball and socket joint."], correct: 2, explanation: "مفصل الإبهام المشطي مفصل سرجي."},
+            {id: 40, part: "Group A", category: "Joints", en: "The following is bi-axial joints:", ar: "ما يلي عبارة عن مفاصل ثنائية المحور:", options: ["Atlanto-axial joints.", "Superior radio-ulnar joints.", "Elbow joints.", "Wrist joints."], correct: 3, explanation: "مفصل الرسغ مفصل زلالي ثنائي المحور."},
+            {id: 41, part: "Group A", category: "Joints", en: "Regarding the synovial joints, choose the correct answer:", ar: "بخصوص المفاصل الزلالية، اختر الإجابة الصحيحة:", options: ["They are joints of limited movements.", "The articulating bones are covered with a synovial membrane.", "Synovial membrane connect the articulating bones.", "The articulating bones are separated by a joint cavity."], correct: 3, explanation: "عظام المفصل الزلالي مفصولة بتجويف مفصلي."},
+            {id: 42, part: "Group A", category: "Joints", en: "The joint that connects the root of a tooth with its socket?", ar: "المفصل الذي يربط جذر السن بتجويفه؟", options: ["Gomphosis.", "Suture.", "Syndesmosis.", "Cartilaginous."], correct: 0, explanation: "مفصل السن (Gomphosis) يربط السن بتجويفها."},
+            {id: 43, part: "Group A", category: "Joints", en: "The type of joint that allows limited movement and is found both in the symphysis pubis and in intervertebral discs is", ar: "نوع المفصل الذي يسمح بحركة محدودة والموجود في كل من مفصل العانة والأقراص بين الفقرات", options: ["Gomphosis.", "Secondary cartilagenous.", "Primary cartilaginous.", "Syndesmosis."], correct: 1, explanation: "المفاصل الغضروفية الثانوية توجد في العانة والأقراص بين الفقرات."},
+            {id: 44, part: "Group A", category: "Joints", en: "An epiphyseal plate is what type of joint?", ar: "لوح النمو (الصفيحة الغضروفية) ما نوع المفصل؟", options: ["Suture.", "Secondary cartilagenous.", "Primary cartilaginous.", "Syndesmosis."], correct: 2, explanation: "لوح النمو مفصل غضروفي أولي."},
+            {id: 45, part: "Group A", category: "Joints", en: "The shoulder and hip joints are of this type.", ar: "مفاصل الكتف والورك من هذا النوع.", options: ["Ball-and-socket.", "Pivot.", "Saddle.", "Plane."], correct: 0, explanation: "مفاصل الكرة والتجويف متعددة المحاور."},
+            {id: 46, part: "Group A", category: "Joints", en: "The type of joint that is distinguished by having a fluid-filled joint cavity is:", ar: "نوع المفصل المميز بوجود تجويف مفصلي مملوء بالسوائل:", options: ["Fibrous.", "Cartilaginous.", "Synovial.", "Suture."], correct: 2, explanation: "المفاصل الزلالية تحتوي على سائل زلالي."},
+            {id: 47, part: "Group A", category: "Blood Vessels", en: "Regarding arteries, all of the following is true except:", ar: "بخصوص الشرايين، جميع ما يلي صحيح ما عدا:", options: ["They transport blood from the heart to different tissues.", "They have no valves.", "All arteries carry oxygenated blood.", "Arterioles are the smallest arteries, less than 0.1 mm in diameter."], correct: 2, explanation: "الشريان الرئوي يحمل الدم غير المؤكسد."},
+            {id: 48, part: "Group A", category: "Heart", en: "Regarding the heart, all of the following are false except:", ar: "بخصوص القلب، جميع ما يلي خاطئ ما عدا:", options: ["The base of the heart is directed downwards.", "The apex of the heart is formed by left ventricle.", "The apex of the heart is directed upwards.", "The base of the heart is formed by right and left ventricles."], correct: 1, explanation: "قمة القلب يشكلها البطين الأيسر."},
+            {id: 49, part: "Group A", category: "Heart", en: "Regarding the heart, all of the following are true except:", ar: "بخصوص القلب، جميع ما يلي صحيح ما عدا:", options: ["Right atrium receives deoxygenated blood by superior and inferior vena cava.", "Right ventricles forces oxygenated blood to pass through the pulmonary artery.", "Oxygenated blood returns from lungs to left atrium through pulmonary veins.", "Left ventricle forces the blood to pass through the aorta."], correct: 1, explanation: "البطين الأيمن يدفع الدم غير المؤكسد عبر الشريان الرئوي."},
+            {id: 50, part: "Group A", category: "Tooth", en: "The nerves and blood vessels are present in the following part of the tooth:", ar: "الأعصاب والأوعية الدموية موجودة في الجزء التالي من السن:", options: ["Dentine.", "Pulp.", "Enamel.", "Cement."], correct: 1, explanation: "لب السن يحتوي على الأعصاب والأوعية الدموية."},
+            {id: 51, part: "Group A", category: "Esophagus", en: "Oesophagus shows constrictions at the following sites except:", ar: "المريء يظهر انقباضات في المواقع التالية ما عدا:", options: ["At its beginning.", "Where it is crossed by arch of aorta.", "Where it is crossed by right bronchus.", "As it pierces the diaphragm."], correct: 2, explanation: "المريء ينقبض حيث يعبره القوس الأبهري والشريان الأيسر وليس الأيمن."},
+            {id: 52, part: "Group A", category: "Small Intestine", en: "The following are parts of small intestine except:", ar: "ما يلي أجزاء من الأمعاء الدقيقة ما عدا:", options: ["Duodenum.", "Jejenum.", "Ileum.", "Pylorus."], correct: 3, explanation: "البواب (pylorus) جزء من المعدة وليس الأمعاء الدقيقة."},
+            {id: 53, part: "Group A", category: "Large Intestine", en: "The following are parts of large intestine except:", ar: "ما يلي أجزاء من الأمعاء الغليظة ما عدا:", options: ["Caecum.", "Appendix.", "Pyloric canal.", "Rectum."], correct: 2, explanation: "القناة البوابية جزء من المعدة وليس الأمعاء الغليظة."},
+            {id: 54, part: "Group A", category: "Teeth", en: "All the following are true for the temporary (deciduous) teeth except:", ar: "جميع ما يلي صحيح للأسنان المؤقتة ما عدا:", options: ["Number: 20 (10 in each jaw).", "They begin to erupt at about 6 month.", "They complete eruption at about 24 month.", "They include 6 molars in each jaw."], correct: 3, explanation: "الأسنان المؤقتة تحتوي على 4 أضراس فقط في كل فك."},
+            {id: 55, part: "Group A", category: "Stomach", en: "All the following organs are present in the stomach bed except:", ar: "جميع الأعضاء التالية موجودة في فراش المعدة ما عدا:", options: ["Transverse colon.", "Pancreas.", "Right kidney.", "Spleen."], correct: 2, explanation: "الكلية اليمنى ليست موجودة في فراش المعدة."},
+            {id: 56, part: "Group A", category: "Small Intestine", en: "The following are parts of small intestine except:", ar: "ما يلي أجزاء من الأمعاء الدقيقة ما عدا:", options: ["Duodenum.", "Jejenum.", "Ileum.", "Pylorus."], correct: 3, explanation: "البواب ليس جزءاً من الأمعاء الدقيقة."},
+            {id: 57, part: "Group A", category: "Large Intestine", en: "The following are parts of large intestine except:", ar: "ما يلي أجزاء من الأمعاء الغليظة ما عدا:", options: ["Caecum.", "Appendix.", "Rectum.", "Pyloric canal."], correct: 3, explanation: "القناة البوابية ليست جزءاً من الأمعاء الغليظة."},
+            
+            // Group B questions
+            {id: 58, part: "Group B", category: "Planes", en: "Which plane of body divides it into dorsal and ventral regions?", ar: "أي مستوى من الجسم يقسمه إلى مناطق ظهرية وبطنية؟", options: ["Transverse.", "Coronal.", "Sagittal.", "Parasagittal."], correct: 0, explanation: "المستوى المستعرض يقسم الجسم إلى أجزاء ظهرية (عليا) وبطنية (سفلى)."},
+            {id: 59, part: "Group B", category: "Anatomical Position", en: "Which of the following positions describes anatomical position?", ar: "أي من المواضع التالية يصف الوضعية التشريحية؟", options: ["Standing erect.", "Curled into a ball, as a baby in the uterus.", "Sitting comfortably with hands on knees.", "Lying on one's side."], correct: 0, explanation: "الوضعية التشريحية تعني الوقوف بشكل مستقيم."},
+            {id: 60, part: "Group B", category: "Planes", en: "Regarding the anatomical planes, choose the correct answer:", ar: "بخصوص المستويات التشريحية، اختر الإجابة الصحيحة:", options: ["Sagittal plane divides body into anterior and posterior.", "Coronal plane is a horizontal plane.", "Coronal plane divides body into anterior and posterior.", "Transverse plane divides the body into right and left parts."], correct: 2, explanation: "المستوى التاجي يقسم الجسم إلى أجزاء أمامية وخلفية."},
+            {id: 61, part: "Group B", category: "Anatomical Terms", en: "The following term is correct:", ar: "المصطلح التالي صحيح:", options: ["Peripheral means near the center of the body.", "Inferior means nearer to the head.", "Distal means away from the root of the limb.", "Lateral means nearer to the median plane."], correct: 2, explanation: "البعيد (Distal) يعني بعيداً عن جذر الطرف."},
+            {id: 62, part: "Group B", category: "Anatomical Terms", en: "The humerus is ___ to radius.", ar: "العضد يكون ___ للعظم الكعبري.", options: ["Lateral.", "Distal.", "Proximal.", "Posterior."], correct: 2, explanation: "العضد قريب من الكتف والعظم الكعبري بعيد عن الكتف."},
+            {id: 63, part: "Group B", category: "Anatomical Terms", en: "Away from midline.", ar: "بعيداً عن الخط الأوسط.", options: ["Lateral.", "Distal.", "Superior.", "Transverse."], correct: 0, explanation: "الجانبي (Lateral) يعني بعيداً عن الخط الأوسط."},
+            {id: 64, part: "Group B", category: "Anatomical Terms", en: "Toward the back; opposite of Anterior.", ar: "نحو الخلف؛ عكس الأمامي.", options: ["Superior.", "Posterior.", "Inferior.", "Lateral."], correct: 1, explanation: "الخلفي (Posterior) نحو الخلف."},
+            {id: 65, part: "Group B", category: "Anatomical Terms", en: "Deep", ar: "عميق", options: ["Deep.", "Distal.", "Medial.", "Proximal."], correct: 0, explanation: "العميق يعني بعيداً عن السطح."},
+            {id: 66, part: "Group B", category: "Anatomical Terms", en: "The knee is ___ to the ankle.", ar: "الركبة ___ الكاحل.", options: ["Proximal.", "Lateral.", "Distal.", "Media."], correct: 0, explanation: "الركبة قريبة من الورك والكاحل بعيد عن الورك."},
+            {id: 67, part: "Group B", category: "Organization", en: "Which is the correct structural order?", ar: "ما هو الترتيب الهيكلي الصحيح؟", options: ["Tissue-cells-organ-system.", "Cells-tissue-system-organ.", "Tissue-cells-system-organs.", "Cells-tissue-organ-system."], correct: 3, explanation: "الترتيب: خلايا > أنسجة > أعضاء > أجهزة."},
+            {id: 68, part: "Group B", category: "Anatomical Position", en: "In the anatomical position, the palms are facing-", ar: "في الوضعية التشريحية، تكون الكفان تواجه-", options: ["Forward.", "Backward.", "Medial.", "Lateral."], correct: 0, explanation: "في الوضعية التشريحية، الكفان يواجهان للأمام."},
+            {id: 69, part: "Group B", category: "Anatomical Position", en: "The correct anatomical position does Not include of the following positions.", ar: "الوضعية التشريحية الصحيحة لا تشمل أياً من المواضع التالية.", options: ["Palms facing backwards.", "Standing erect.", "Hands at the sides, and feet parallel.", "Head facing forward."], correct: 0, explanation: "في الوضعية التشريحية، الكفان لا يواجهان للخلف."},
+            {id: 70, part: "Group B", category: "Organization", en: "A group of cells of the same type form a (an)", ar: "مجموعة من الخلايا من نفس النوع تشكل", options: ["Organ.", "Organism.", "Atom.", "Tissue.", "Organ system."], correct: 3, explanation: "مجموعة خلايا من نفس النوع تشكل نسيجاً."},
+            {id: 71, part: "Group B", category: "Organization", en: "A group of tissues working together for a specific function form a (n)", ar: "مجموعة من الأنسجة التي تعمل معاً لوظيفة معينة تشكل", options: ["Organ.", "Organism.", "Positive feedback system.", "Organ system.", "Organelle."], correct: 0, explanation: "مجموعة أنسجة تشكل عضواً."},
+            {id: 72, part: "Group B", category: "Bones Classification", en: "Which of the following is an example of a flat bone?", ar: "أي من التالي مثال على عظم مسطح؟", options: ["Humerus.", "Sternum.", "Hamate.", "Maxilla."], correct: 1, explanation: "عظم الصدر عظم مسطح."},
+            {id: 73, part: "Group B", category: "Skeleton", en: "The axial skeleton is formed of the following bones EXCEPT:", ar: "الهيكل العظمي المحوري يتكون من العظام التالية ما عدا:", options: ["Vertebral column.", "Femur.", "Skull.", "Sternum."], correct: 1, explanation: "عظم الفخذ من الهيكل العظمي الطرفي وليس المحوري."},
+            {id: 74, part: "Group B", category: "Skeleton", en: "The following bone belongs to the axial skeleton:", ar: "العظم التالي ينتمي للهيكل العظمي المحوري:", options: ["Scapula.", "Humerus.", "Sternum.", "Femur."], correct: 2, explanation: "عظم الصدر عظم محوري."},
+            {id: 75, part: "Group B", category: "Vertebral Column", en: "Regarding vertebral column, all of the following are correct EXCEPT:", ar: "بخصوص العمود الفقري، جميع ما يلي صحيح ما عدا:", options: ["Thoracic vertebrae are 7 in number.", "It belongs to the axial skeleton.", "Thoracic vertebrae are 12 in number.", "Sacral vertebrae are fused."], correct: 0, explanation: "الفقرات الصدرية 12 وليس 7."},
+            {id: 76, part: "Group B", category: "Skeleton", en: "The bones which form the shoulder girdle are:", ar: "العظام التي تشكل حزام الكتف:", options: ["Radius and humerus.", "Clavicle and humerus.", "Clavicle and scapula.", "Scapula and humerus.", "Sternum and clavicle."], correct: 2, explanation: "حزام الكتف يتكون من الترقوة والكتف."},
+            {id: 77, part: "Group B", category: "Bones Classification", en: "The following is an example of sesamoid bone:", ar: "التالي مثال على عظم عدسي:", options: ["Scapula.", "Humerus.", "Patella.", "Femur."], correct: 2, explanation: "الرضفة عظم عدسي."},
+            {id: 78, part: "Group B", category: "Bones Classification", en: "The scapula is an example of:", ar: "الكتف مثال على:", options: ["Irregular bone.", "Flat bone.", "Pneumatic bone.", "Short bone."], correct: 1, explanation: "الكتف عظم مسطح."},
+            {id: 79, part: "Group B", category: "Skeleton", en: "The following are bones of the upper limb EXCEPT:", ar: "التالي عظام من الطرف العلوي ما عدا:", options: ["Patella.", "Humerus.", "Scapula.", "Ulna.", "Radius."], correct: 0, explanation: "الرضفة عظم من الطرف السفلي."},
+            {id: 80, part: "Group B", category: "Skeleton Functions", en: "Which of the following is a function of the skeletal system?", ar: "أي من التالي وظيفة من وظائف الجهاز العظمي؟", options: ["Haematemsis.", "Haemostasis.", "Haemopoiesis.", "Digestion."], correct: 2, explanation: "تكوين الدم (Haemopoiesis) وظيفة من وظائف النخاع العظمي."},
+            {id: 81, part: "Group B", category: "Vertebral Column", en: "Which of the following comprise 7 bones?", ar: "أي من التالي يتكون من 7 عظام؟", options: ["Cervical vertebrae.", "Carpals.", "Thoracic vertebrae.", "Lumbar vertebrae."], correct: 0, explanation: "الفقرات العنقية 7."},
+            {id: 82, part: "Group B", category: "Skull", en: "The maxilla is considered:", ar: "الفك العلوي يعتبر:", options: ["Flat bone.", "Short bone.", "Long bone.", "Pneumatic bone."], correct: 3, explanation: "الفك العلوي عظم رئوي."},
+            {id: 83, part: "Group B", category: "Long Bones", en: "Regarding the metaphysis of long bone, it is:", ar: "بخصوص ما بين النهايتين في العظم الطويل:", options: ["The part of the diaphysis near the center of the bone.", "The part of the diaphysis close to the epiphyseal cartilage.", "Part of the epiphysis.", "Cartilaginous plate separating the epiphysis and diaphysis of a long bone."], correct: 1, explanation: "ما بين النهايتين هو جزء من الجسم قريب من الغضروف."},
+            {id: 84, part: "Group B", category: "Long Bones", en: "The site of growth of long bone in length is due to activity of:", ar: "موقع نمو العظم الطويل يعود إلى نشاط:", options: ["Epiphysis.", "Metaphysis.", "Diaphysis.", "Epiphyseal cartilage."], correct: 3, explanation: "لوح النمو مسؤول عن النمو في الطول."},
+            {id: 85, part: "Group B", category: "Long Bones", en: "Besides support and protection, the skeleton serves other important functions, including", ar: "بالإضافة إلى الدعم والحماية، الهيكل العظمي يوفر وظائف مهمة أخرى", options: ["Reproduction.", "Locomotion.", "Respiration.", "Hemostasis."], correct: 1, explanation: "الحركة واحدة من الوظائف المهمة للهيكل العظمي."},
+            {id: 86, part: "Group B", category: "Long Bones", en: "A long bone is covered from outside by a thin layer of connective tissue called the", ar: "العظم الطويل مغطى من الخارج بطبقة رقيقة من النسيج الضام تسمى", options: ["Diaphysis.", "Endosteum.", "Periosteum.", "Metaphysis."], correct: 2, explanation: "الغشاء العظمي (Periosteum) يغطي العظم من الخارج."},
+            {id: 87, part: "Group B", category: "Bones Classification", en: "Examples of bones classification according to their shape", ar: "أمثلة على تصنيف العظام حسب شكلها", options: ["Femur (short bone).", "Tarsal bones (short bone).", "Scapula (irregular).", "Patella (flat bone)."], correct: 1, explanation: "عظام الرسغ عظام قصيرة."},
+            {id: 88, part: "Group B", category: "Long Bones", en: "All the following arteries supply the long bones except", ar: "جميع الشرايين التالية تزود العظام الطويلة ما عدا", options: ["Periosteal.", "Nutrient.", "Arteries to epiphyseal cartilage.", "Epiphyseal."], correct: 2, explanation: "الشرايين التي تزود غضروف النمو موجودة."},
+            {id: 89, part: "Group B", category: "Bone Marrow", en: "Blood cell formation (haemopoiesis) occurs in:", ar: "تكوين خلايا الدم يحدث في:", options: ["Red marrow.", "Yellow marrow.", "Medullary cavity.", "Periosteum.", "Epiphyseal plate."], correct: 0, explanation: "النخاع الأحمر مسؤول عن تكوين الدم."},
+            {id: 90, part: "Group B", category: "Carpal and Tarsal Bones", en: "There are ___ carpal bones and ___ tarsal bones.", ar: "هناك ___ عظام رسغ و ___ عظام سنع.", options: ["7-8.", "8-7.", "8-8.", "7-7."], correct: 1, explanation: "عظام الرسغ 8 وعظام السنع 7."},
+            {id: 91, part: "Group B", category: "Lower Limb", en: "Which of the following is the lateral bone of the lower leg?", ar: "أي من التالي العظم الجانبي للساق السفلى؟", options: ["Fibula.", "Femur.", "Tibia.", "Radius."], correct: 0, explanation: "الشظية العظم الجانبي للساق."},
+            {id: 92, part: "Group B", category: "Long Bones", en: "The ends of long bones are called the ___.", ar: "نهايات العظم الطويل تسمى ___.", options: ["Epiphyses.", "Diaphysis.", "Metaphyses.", "Endosteum."], correct: 0, explanation: "النهايات (Epiphyses) هي نهايات العظم الطويل."},
+            {id: 93, part: "Group B", category: "Long Bones", en: "In long bone, spongy bone is found in the ___.", ar: "في العظم الطويل، العظم الإسفنجي يوجد في ___.", options: ["Diaphysis.", "Epiphyses.", "Periosteum.", "Medullary cavity."], correct: 1, explanation: "العظم الإسفنجي موجود في النهايات."},
+            {id: 94, part: "Group B", category: "Joints", en: "Which of the following is an example of a cartilaginous joint?", ar: "أي من التالي مثال على مفصل غضروفي؟", options: ["Humeroulnar joint.", "Middle radioulnar joint.", "Intervertebral disc joint.", "Cranial sutural joint."], correct: 2, explanation: "مفصل القرص بين الفقرات مفصل غضروفي."},
+            {id: 95, part: "Group B", category: "Cartilage", en: "The type of cartilage found in intervertebral discs is _______.", ar: "نوع الغضروف الموجود في الأقراص بين الفقرات هو _______.", options: ["Hyaline cartilage.", "Elastic cartilage.", "Epiphyseal cartilage.", "Fibrocartilage."], correct: 3, explanation: "الأقراص بين الفقرات تحتوي على غضروف ليفي."},
+            {id: 96, part: "Group B", category: "Joints", en: "Following is cartilaginous joint:", ar: "ما يلي مفصل غضروفي:", options: ["Sagittal suture.", "Gomphosis.", "Pubic symphysis.", "Syndesmosis."], correct: 2, explanation: "مفصل العانة مفصل غضروفي."},
+            {id: 97, part: "Group B", category: "Joints", en: "Regarding the saddle joint, one of the following is true:", ar: "بخصوص مفصل السرج، أحد ما يلي صحيح:", options: ["It is a fibrous joint.", "Allows supination and pronation movements only.", "Acromio-clavicular joint is modified saddle.", "The carpometacarpal joint of the thumb is an example."], correct: 3, explanation: "مفصل الإبهام المشطي مثال على مفصل السرج."},
+            {id: 98, part: "Group B", category: "Joints", en: "Regarding primary cartilaginous joints choose the correct:", ar: "بخصوص المفاصل الغضروفية الأولية اختر الصحيح:", options: ["The intervening cartilage is elastic.", "Ultimately ossify.", "All are quite mobile.", "Inferior radio-ulnar joint is an example."], correct: 1, explanation: "المفاصل الغضروفية الأولية تتحول إلى عظام."},
+            {id: 99, part: "Group B", category: "Joints", en: "The inferior tibio-fibular joint is an example of:", ar: "مفصل الظنبوب والشظية السفلي مثال على:", options: ["Fibrous joint.", "Plane synovial joint.", "Uniaxial synovial joint.", "Biaxial synovial joint.", "Cartilaginous joint."], correct: 0, explanation: "مفصل الظنبوب والشظية السفلي مفصل ليفي."},
+            {id: 100, part: "Group B", category: "Joints", en: "A polyaxial synovial joint having a medial rotation movement its variety is:", ar: "مفصل زلالي متعدد المحاور له حركة دوران وسطية:", options: ["Hinge.", "Condyloid.", "Ball and socket.", "Plane joint."], correct: 2, explanation: "مفصل الكرة والتجويف متعدد المحاور."},
+            {id: 101, part: "Group B", category: "Joints", en: "An injury to elbow joint will affect, which movement of it:", ar: "إصابة مفصل الكوع ستؤثر على أي حركة:", options: ["Extension.", "Supination.", "Pronation.", "Medial rotation."], correct: 0, explanation: "إصابة الكوع تؤثر على المد."},
+            {id: 102, part: "Group B", category: "Joints", en: "Regarding the carpo-metacarpal joint of the thumb, its variety is:", ar: "بخصوص مفصل الإبهام المشطي، نوعه:", options: ["Hinge joint.", "Condyloid joint.", "Saddle joint.", "Ball and socket joint."], correct: 2, explanation: "مفصل الإبهام المشطي مفصل سرجي."},
+            {id: 103, part: "Group B", category: "Joints", en: "The stability of joints depends upon:", ar: "استقرار المفاصل يعتمد على:", options: ["Shape of the articulating bones.", "Type of joint.", "Axis of movement.", "Number of bone articulating."], correct: 0, explanation: "شكل العظام المفصلية يؤثر على استقرار المفصل."},
+            {id: 104, part: "Group B", category: "Joints", en: "The joint that connects the root of a tooth with its socket", ar: "المفصل الذي يربط جذر السن بتجويفه", options: ["Gomphosis.", "Suture.", "Syndesmosis.", "Cartilaginous."], correct: 0, explanation: "مفصل السن (Gomphosis) يربط السن بتجويفها."},
+            {id: 105, part: "Group B", category: "Joints", en: "The type of joint that is distinguished by having a fluid-filled joint cavity is a joint", ar: "نوع المفصل المميز بوجود تجويف مفصلي مملوء بالسوائل", options: ["Fibrous.", "Cartilaginous.", "Synovial.", "Suture.", "Gomophosis."], correct: 2, explanation: "المفاصل الزلالية تحتوي على سائل زلالي."},
+            {id: 106, part: "Group B", category: "Joints", en: "Which of the following is matched with its movements", ar: "أي من التالي متطابق مع حركاته", options: ["Plane joint - gliding/sliding movements.", "Hinge joints - multiaxial.", "Saddle joint - multiaxial.", "Ball & socket joint – biaxial."], correct: 0, explanation: "المفاصل المستوية تسمح بحركات انزلاقية."},
+            {id: 107, part: "Group B", category: "Joints", en: "The hip joint is:", ar: "مفصل الورك هو:", options: ["Biaxial synovial joint.", "Ball and socket synovial joint.", "Pivot synovial joint.", "Ellipsoid synovial."], correct: 1, explanation: "مفصل الورك مفصل كرة وتجويف."},
+            {id: 108, part: "Group B", category: "Joints", en: "The elbow joint would be considered a type of:", ar: "مفصل الكوع يعتبر نوعاً من:", options: ["Pivot joint.", "Hinge joint.", "Saddle joint.", "Plane joint."], correct: 1, explanation: "مفصل الكوع مفصل مفصلي (hinge joint)."},
+            {id: 109, part: "Group B", category: "Joints", en: "All the following are fibrous joints EXCEPT", ar: "جميع ما يلي مفاصل ليفية ما عدا", options: ["Symphysis.", "Syndesmosis.", "Gomphosis.", "Sutures."], correct: 0, explanation: "الالتحام (Symphysis) مفصل غضروفي وليس ليفي."},
+            {id: 110, part: "Group B", category: "Joints", en: "The wrist joint is an example for… joints:", ar: "مفصل الرسغ مثال على مفاصل:", options: ["Condylar.", "Saddle.", "Ellipsoid.", "Plane."], correct: 2, explanation: "مفصل الرسغ مفصل بيضوي."},
+            {id: 111, part: "Group B", category: "Tongue", en: "The organ of taste is", ar: "عضو الذوق هو", options: ["Teeth.", "Tongue.", "Pharynx.", "Larynx."], correct: 1, explanation: "اللسان هو عضو الذوق."},
+            {id: 112, part: "Group B", category: "Teeth", en: "Number of milky teeth is:", ar: "عدد الأسنان اللبنية:", options: ["10.", "20.", "36.", "14."], correct: 1, explanation: "عدد الأسنان اللبنية 20."},
+            {id: 113, part: "Group B", category: "Teeth", en: "Number of permanent teeth is", ar: "عدد الأسنان الدائمة", options: ["10.", "20.", "32.", "14."], correct: 2, explanation: "عدد الأسنان الدائمة 32."},
+            {id: 114, part: "Group B", category: "Teeth", en: "The 1st milky teeth erupt at:", ar: "أول سن لبني تظهر في:", options: ["6 years.", "2 years.", "6 months.", "18 years."], correct: 2, explanation: "أول سن تظهر في حوالي 6 أشهر."},
+            {id: 115, part: "Group B", category: "Teeth", en: "The first permanent teeth appear at", ar: "أول سن دائم تظهر في", options: ["6 years.", "2 years.", "6 months.", "18 years.", "21 years."], correct: 0, explanation: "أول سن دائم تظهر في حوالي 6 سنوات."},
+            {id: 116, part: "Group B", category: "Pharynx", en: "Length of pharynx is:", ar: "طول البلعوم:", options: ["14 inch.", "25 cm.", "14 cm.", "20 cm."], correct: 2, explanation: "طول البلعوم حوالي 14 سم."},
+            {id: 117, part: "Group B", category: "Pharynx", en: "The pharynx end at the level of:", ar: "ينتهي البلعوم في مستوى:", options: ["C3.", "C4.", "C5.", "C6.", "C7."], correct: 2, explanation: "البلعوم ينتهي في مستوى C5."},
+            {id: 118, part: "Group B", category: "Pharynx", en: "The pharyngeal tonsil is found at", ar: "اللوزة البلعومية توجد في", options: ["Nasopharynx.", "Oropharynx.", "Laryngopharynx.", "Esophagus."], correct: 0, explanation: "اللوزة البلعومية في البلعوم الأنفي."},
+            {id: 119, part: "Group B", category: "Esophagus", en: "The esophagus begins at the level of:", ar: "المريء يبدأ في مستوى:", options: ["C3.", "C4.", "C5.", "C6."], correct: 2, explanation: "المريء يبدأ في مستوى C5."},
+            {id: 120, part: "Group B", category: "Esophagus", en: "The length of esophagus is:", ar: "طول المريء:", options: ["10 cm.", "14 inch.", "25 cm.", "14 cm."], correct: 2, explanation: "طول المريء حوالي 25 سم."},
+            {id: 121, part: "Group B", category: "Esophagus", en: "The esophagus ends at the level of:", ar: "ينتهي المريء في مستوى:", options: ["C7.", "T11.", "T10.", "T12."], correct: 3, explanation: "المريء ينتهي في مستوى T12."},
+            {id: 122, part: "Group B", category: "Stomach", en: "Lesser curvature is attached to", ar: "الانحناء الأصغر مرتبط بـ", options: ["Gastro-splenic ligament.", "Lesser sac.", "Lesser omentum.", "Greater omentum."], correct: 2, explanation: "الانحناء الأصغر مرتبط بالشريط الأصغر."},
+            {id: 123, part: "Group B", category: "Stomach", en: "Stomach bed is not related to", ar: "فراش المعدة غير مرتبط بـ", options: ["Spleen.", "Pancreas.", "Left kidney.", "Right kidney."], correct: 3, explanation: "الكلية اليمنى ليست في فراش المعدة."},
+            {id: 124, part: "Group B", category: "Duodenum", en: "The length of 3rd part of duodenum is", ar: "طول الجزء الثالث من الاثني عشر:", options: ["One inch.", "2 inches.", "3 inches.", "4 inches."], correct: 0, explanation: "الجزء الثالث من الاثني عشر حوالي بوصة واحدة."},
+            {id: 125, part: "Group B", category: "Duodenum", en: "The length of 4th part of duodenum is", ar: "طول الجزء الرابع من الاثني عشر:", options: ["One inch.", "2 inches.", "3 inches.", "4 inches."], correct: 0, explanation: "الجزء الرابع من الاثني عشر حوالي بوصة واحدة."},
+            {id: 126, part: "Group B", category: "Duodenum", en: "The length of 2nd part of duodenum is", ar: "طول الجزء الثاني من الاثني عشر:", options: ["One inch.", "2 inches.", "3 inches.", "4 inches."], correct: 2, explanation: "الجزء الثاني من الاثني عشر حوالي 3 بوصات."},
+            {id: 127, part: "Group B", category: "Salivary Glands", en: "The largest salivary gland is", ar: "أكبر غدة لعابية:", options: ["Sublingual gland.", "Submandibular gland.", "Parotid.", "Liver."], correct: 2, explanation: "الغدة النكفية أكبر غدة لعابية."},
+            {id: 128, part: "Group B", category: "Pancreas", en: "Which part of pancreas lie within concavity of duodenum", ar: "أي جزء من البنكرياس يقع في تقعر الاثني عشر", options: ["Head.", "Neck.", "Body.", "Tail.", "Fundus."], correct: 0, explanation: "رأس البنكرياس يقع في تقعر الاثني عشر."},
+            {id: 129, part: "Group B", category: "Liver", en: "The largest gland in the body", ar: "أكبر غدة في الجسم", options: ["Sublingual gland.", "Submandibular gland.", "Parotid.", "Liver."], correct: 3, explanation: "الكبد أكبر غدة في الجسم."},
+            {id: 130, part: "Group B", category: "Liver", en: "The hilum of liver is called", ar: "بوابة الكبد تسمى", options: ["Bare area.", "Porta hepatis.", "Sinus of liver.", "Quadrate lobe."], correct: 1, explanation: "بوابة الكبد تسمى porta hepatis."},
+            {id: 131, part: "Group B", category: "Gallbladder", en: "The fundus of gall bladder is related to", ar: "قاع المرارة مرتبط بـ", options: ["Right 8th costal cartilage.", "Right 9th costal cartilage.", "Left 7th costal cartilage.", "Left 9th costal cartilage."], correct: 1, explanation: "قاع المرارة مرتبط بالغضروف الضلعي التاسع الأيمن."},
+            {id: 132, part: "Group B", category: "Larynx", en: "Larynx begins at the level of", ar: "الحنجرة تبدأ في مستوى", options: ["C2.", "C3.", "C4.", "C5."], correct: 2, explanation: "الحنجرة تبدأ في مستوى C4."},
+            {id: 133, part: "Group B", category: "Larynx", en: "Larynx ends at the level of", ar: "الحنجرة تنتهي في مستوى", options: ["C3.", "C4.", "C5.", "C6."], correct: 2, explanation: "الحنجرة تنتهي في مستوى C5."},
+            {id: 134, part: "Group B", category: "Trachea", en: "Trachea ends at the level of", ar: "القصبة الهوائية تنتهي في مستوى", options: ["Disc between T2,3.", "Disc between T3,4.", "Disc between T4,5.", "Disc between T5,6."], correct: 0, explanation: "القصبة الهوائية تنتهي في مستوى T2-T3."},
+            {id: 135, part: "Group B", category: "Lungs", en: "According to right lung, choose the correct", ar: "بخصوص الرئة اليمنى، اختر الصحيح", options: ["It is longer than left one.", "Has 2 fissures.", "It is formed of 2 lobes.", "It contains one fissure."], correct: 1, explanation: "الرئة اليمنى تحتوي على شقين (fissures)."},
+            {id: 136, part: "Group B", category: "Lungs", en: "According to left lung, choose the correct", ar: "بخصوص الرئة اليسرى، اختر الصحيح", options: ["It is longer than right one.", "It is wider than the right one.", "It is formed of 3 lobes.", "It contains 2 fissures."], correct: 3, explanation: "الرئة اليسرى تحتوي على شقين."},
+            {id: 137, part: "Group B", category: "Urinary Bladder", en: "Base of urinary bladder in males related to", ar: "قاعدة المثانة في الذكور مرتبطة بـ", options: ["Prostate.", "Anal canal.", "Seminal vesicle.", "Lateral wall of pelvis."], correct: 0, explanation: "قاعدة المثانة في الذكور مرتبطة بالبروستاتا."},
+            {id: 138, part: "Group B", category: "Urinary Bladder", en: "Base of urinary bladder in female related to", ar: "قاعدة المثانة في الإناث مرتبطة بـ", options: ["Anal canal.", "Rectum.", "Lateral wall of pelvis.", "Vagina."], correct: 3, explanation: "قاعدة المثانة في الإناث مرتبطة بالمهبل."},
+            {id: 139, part: "Group B", category: "Male Urethra", en: "The length of male urethra is", ar: "طول مجرى البول الذكري", options: ["20cm.", "3cm.", "4cm.", "15cm."], correct: 3, explanation: "طول مجرى البول الذكري حوالي 20 سم."},
+            {id: 140, part: "Group B", category: "Urethra", en: "The length of prostatic urethra is", ar: "طول الجزء البروستاتي من مجرى البول", options: ["20cm.", "3cm.", "4cm.", "15cm."], correct: 1, explanation: "الجزء البروستاتي حوالي 3 سم."},
+            {id: 141, part: "Group B", category: "Urethra", en: "The length of membranous urethra is", ar: "طول الجزء الغشائي من مجرى البول", options: ["20cm.", "3cm.", "2cm.", "15cm."], correct: 2, explanation: "الجزء الغشائي حوالي 2-2.5 سم."},
+            {id: 142, part: "Group B", category: "Urethra", en: "The length of penile urethra is", ar: "طول الجزء القضيبي من مجرى البول", options: ["20cm.", "3cm.", "4cm.", "15cm."], correct: 3, explanation: "الجزء القضيبي حوالي 15 سم."},
+            {id: 143, part: "Group B", category: "Female Urethra", en: "The length of female urethra is", ar: "طول مجرى البول الأنثوي", options: ["20cm.", "3cm.", "4cm.", "15cm."], correct: 1, explanation: "طول مجرى البول الأنثوي حوالي 3-4 سم."},
+            {id: 144, part: "Group B", category: "Urethra", en: "Which of the following parts of the male urethra is the widest and most dilatable?", ar: "أي من الأجزاء التالية من مجرى البول الذكري هو الأوسع والأكثر قابلية للتوسع؟", options: ["Preprostatic.", "Prostatic.", "Membranous.", "External urethral meatus."], correct: 1, explanation: "الجزء البروستاتي هو الأوسع والأكثر قابلية للتوسع."},
+            {id: 145, part: "Group B", category: "Urethra", en: "The navicular fossa is located in which of the following structures?", ar: "الحفرة القاربية تقع في أي من الهياكل التالية؟", options: ["Neck of urinary bladder.", "Prostate.", "Membranous urethra.", "Penile urethra."], correct: 3, explanation: "الحفرة القاربية تقع في الجزء القضيبي من مجرى البول."},
+            {id: 146, part: "Group B", category: "Fallopian Tube", en: "The length of fallopian tube is:", ar: "طول قناة فالوب:", options: ["10 cm.", "10 inch.", "25 cm.", "14 cm."], correct: 0, explanation: "طول قناة فالوب حوالي 10 سم."},
+            {id: 147, part: "Group B", category: "Uterus", en: "The lower part of uterus is named", ar: "الجزء السفلي من الرحم يسمى", options: ["Fundus.", "Body.", "Infundibulum.", "Cervix."], correct: 3, explanation: "الجزء السفلي من الرحم يسمى عنق الرحم."},
+            {id: 148, part: "Group B", category: "Fallopian Tube", en: "The widest part of fallopian tube is", ar: "أوسع جزء من قناة فالوب هو", options: ["Ampulla.", "Infundibulum.", "Isthmus.", "Intramural part."], correct: 0, explanation: "التوسع (Ampulla) أوسع جزء."},
+            {id: 149, part: "Group B", category: "Fallopian Tube", en: "The narrowest part of fallopian tube outside the uterus is", ar: "أضيق جزء من قناة فالوب خارج الرحم هو", options: ["Ampulla.", "Infundibulum.", "Isthmus.", "Intramural part."], correct: 2, explanation: "الإسثموس (Isthmus) أضيق جزء خارج الرحم."},
+            {id: 150, part: "Group B", category: "Fallopian Tube", en: "The site of fertilization is ___ of fallopian tube", ar: "موقع الإخصاب هو ___ من قناة فالوب", options: ["Ampulla.", "Infundibulum.", "Isthmus.", "Intramural part."], correct: 0, explanation: "الإخصاب يحدث في التوسع."},
+            {id: 151, part: "Group B", category: "Cervix", en: "The cervical canal communicates with vagina at", ar: "قناة عنق الرحم تتواصل مع المهبل عند", options: ["Internal os.", "External os.", "Infundibulum.", "Opening of vagina."], correct: 1, explanation: "الفتحة الخارجية (External os) تتواصل مع المهبل."},
+            {id: 152, part: "Group B", category: "Cervix", en: "The cervical canal communicates with uterus at", ar: "قناة عنق الرحم تتواصل مع الرحم عند", options: ["Internal os.", "External os.", "Infundibulum.", "Fundus."], correct: 0, explanation: "الفتحة الداخلية (Internal os) تتواصل مع الرحم."},
+            {id: 153, part: "Group B", category: "Vagina", en: "The anterior wall of vagina measure", ar: "جدار المهبل الأمامي يقيس", options: ["7.5 inch.", "10 inches.", "7.5 cm.", "10 cm."], correct: 1, explanation: "الجدار الأمامي حوالي 10 بوصات."},
+            {id: 154, part: "Group B", category: "Vagina", en: "The posterior wall of vagina measure", ar: "جدار المهبل الخلفي يقيس", options: ["7.5 inch.", "10 inches.", "7.5 cm.", "9 cm."], correct: 1, explanation: "الجدار الخلفي حوالي 10 بوصات (أطول قليلاً)."},
+            {id: 155, part: "Group B", category: "Blood Vessels", en: "The only artery that carry deoxygenated blood are", ar: "الشريان الوحيد الذي يحمل الدم غير المؤكسد", options: ["Pulmonary vein.", "Pulmonary trunk.", "Aorta.", "Superior vena cava.", "Inferior vena cava."], correct: 1, explanation: "الشريان الرئوي يحمل الدم غير المؤكسد."},
+    //c
+            {id: 156, part: "Group C", category: "Position Terms", en: "Is close to the front of the body.", ar: "قريبة من مقدمة الجسم (السطح الأمامي).", options: ["Superficial", "Superior", "Median", "Plantar", "Anterior", "Proximal", "Distal", "Palmar"], correct: 4, explanation: "المصطلح Anterior يعني قريب من السطح الأمامي للجسم."},
+            {id: 157, part: "Group C", category: "Position Terms", en: "Is the midsagittal plane.", ar: "هو المستوى السهمي الأوسط (في منتصف الجسم).", options: ["Superficial", "Superior", "Median", "Plantar", "Anterior", "Proximal", "Distal", "Palmar"], correct: 2, explanation: "المصطلح Median يُستخدم للمستوى السهمي الذي يمر في منتصف الجسم."},
+            {id: 158, part: "Group C", category: "Position Terms", en: "Is close to the surface of the body.", ar: "قريب من سطح الجسم.", options: ["Superficial", "Superior", "Median", "Plantar", "Anterior", "Proximal", "Distal", "Palmar"], correct: 0, explanation: "Superficial تعني سطحي؛ أي قريب من سطح الجسم."},
+            {id: 159, part: "Group C", category: "Position Terms", en: "Is the sole of the foot.", ar: "هو باطن/أسفل القدم.", options: ["Superficial", "Superior", "Median", "Plantar", "Anterior", "Proximal", "Distal", "Palmar"], correct: 3, explanation: "Plantar يُستخدم لوصف باطن القدم."},
+            {id: 160, part: "Group C", category: "Position Terms", en: "Is toward the head.", ar: "اتجاهه نحو الرأس (أعلى الجسم).", options: ["Superficial", "Superior", "Median", "Plantar", "Anterior", "Proximal", "Distal", "Palmar"], correct: 1, explanation: "Superior يعني أعلى أو أقرب للرأس."},
+
+            {id: 161, part: "Group C", category: "Muscle Movements", en: "The movement away from the central axis of the body or of a limb.", ar: "حركة بعيدة عن المحور المركزي للجسم أو الطرف.", options: ["Flexion", "Medial rotation", "Extension", "Abduction", "Supination", "Inversion", "Adduction"], correct: 3, explanation: "Abduction هي حركة الإبعاد عن محور الجسم."},
+            {id: 162, part: "Group C", category: "Muscle Movements", en: "Medial rotation of foot.", ar: "الدوران للداخل للقدم.", options: ["Flexion", "Medial rotation", "Extension", "Abduction", "Supination", "Inversion", "Adduction"], correct: 5, explanation: "Inversion هي دوران باطن القدم للداخل (medial rotation)."},
+                        {id: 163, part: "Group C", category: "Muscle Movements", en: "Approximation of two surfaces or bending.", ar: "تقريب سطحين من بعض أو ثني المفصل.", options: ["Flexion", "Medial rotation", "Extension", "Abduction", "Supination", "Inversion", "Adduction"], correct: 0, explanation: "Flexion هي حركة الثني أو تقريب السطحين من بعض."},
+            {id: 164, part: "Group C", category: "Muscle Movements", en: "Lateral rotation of forearm.", ar: "الدوران للخارج للساعد (راحة اليد لأعلى).", options: ["Flexion", "Medial rotation", "Extension", "Abduction", "Supination", "Inversion", "Adduction"], correct: 4, explanation: "Supination هي تدوير الساعد بحيث تتجه راحة اليد لأعلى أو للأمام."},
+            {id: 165, part: "Group C", category: "Muscle Movements", en: "The movement towards the central axis of the body.", ar: "الحركة في اتجاه المحور المركزي للجسم.", options: ["Flexion", "Medial rotation", "Extension", "Abduction", "Supination", "Inversion", "Adduction"], correct: 6, explanation: "Adduction هي حركة التقريب نحو محور الجسم."},
+
+            {id: 166, part: "Group C", category: "Bone Shape", en: "Scapula and bones of skull cap are examples of:", ar: "لوح الكتف وعظام قبة الجمجمة هي أمثلة على:", options: ["Short bones", "Long bones", "Irregular bones", "Pneumatic bones", "Sesamoid bone", "Flat bones"], correct: 5, explanation: "لوح الكتف وعظام قبة الجمجمة تصنف كعظام مسطحة."},
+            {id: 167, part: "Group C", category: "Bone Shape", en: "They are found in carpal and tarsal bones.", ar: "توجد في عظام الرسغ وعظام الكرسوع.", options: ["Short bones", "Long bones", "Irregular bones", "Pneumatic bones", "Sesamoid bone", "Flat bones"], correct: 0, explanation: "عظام الرسغ والكرسوع هي عظام قصيرة."},
+            {id: 168, part: "Group C", category: "Bone Shape", en: "They are found in the vertebra.", ar: "توجد في الفقرات.", options: ["Short bones", "Long bones", "Irregular bones", "Pneumatic bones", "Sesamoid bone", "Flat bones"], correct: 2, explanation: "الفقرات مثال على العظام غير المنتظمة."},
+            {id: 169, part: "Group C", category: "Bone Shape", en: "They are bones containing air-filled spaces.", ar: "عظام تحتوي على تجاويف مملوءة بالهواء.", options: ["Short bones", "Long bones", "Irregular bones", "Pneumatic bones", "Sesamoid bone", "Flat bones"], correct: 3, explanation: "Pneumatic bones هي عظام ذات تجاويف هوائية مثل الماكسلّا."},
+            {id: 170, part: "Group C", category: "Bone Shape", en: "They are small nodules of bone developing inside the tendon of certain muscles as patella.", ar: "عقد عظمية صغيرة تتطور داخل أوتار بعض العضلات مثل عظمة الرضفة.", options: ["Short bones", "Long bones", "Irregular bones", "Pneumatic bones", "Sesamoid bone", "Flat bones"], correct: 4, explanation: "الرضفة مثال على عظم سمسماني (Sesamoid)."},
+            {id: 171, part: "Group C", category: "Joints Types", en: "Synovial joint in which movement occur around transverse axis.", ar: "مفصل زلالي تحدث فيه الحركة حول محور عرضي واحد.", options: ["Gomphosis", "Pivot", "Suture", "Ball and socket", "Plane", "Hinge"], correct: 5, explanation: "Hinge joint يسمح بالحركة في مستوى واحد حول محور عرضي مثل مفصل الكوع."},
+            {id: 172, part: "Group C", category: "Joints Types", en: "Fibrous joint in which a peg is fixed into socket.", ar: "مفصل ليفي يُثبت فيه جزء يشبه الوتد داخل تجويف.", options: ["Gomphosis", "Pivot", "Suture", "Ball and socket", "Plane", "Hinge"], correct: 0, explanation: "Gomphosis هو مفصل مثل جذر السن في تجويفه."},
+            {id: 173, part: "Group C", category: "Joints Types", en: "Synovial joint in which articulating surfaces are flat, and the movements permitted are only sliding.", ar: "مفصل زلالي تكون فيه الأسطح المفصلية مسطحة والحركة انزلاقية فقط.", options: ["Gomphosis", "Pivot", "Suture", "Ball and socket", "Plane", "Hinge"], correct: 4, explanation: "Plane joint يسمح بحركات انزلاقية بين الأسطح المسطحة."},
+            {id: 174, part: "Group C", category: "Joints Types", en: "Synovial joint in which movements occur around longitudinal axis.", ar: "مفصل زلالي تحدث فيه حركة حول محور طولي.", options: ["Gomphosis", "Pivot", "Suture", "Ball and socket", "Plane", "Hinge"], correct: 1, explanation: "Pivot joint يسمح بحركة دوران حول محور طولي مثل المفصل بين الأطلس والمحور."},
+            {id: 175, part: "Group C", category: "Joints Types", en: "Synovial joint in which movements are poly-axial.", ar: "مفصل زلالي تكون حركته متعددة المحاور.", options: ["Gomphosis", "Pivot", "Suture", "Ball and socket", "Plane", "Hinge"], correct: 3, explanation: "Ball and socket joint يسمح بالحركة في عدة محاور مثل مفصل الكتف والورك."},
+
+            // Group D – True / False converted to MCQ (True / False)
+
+            {id: 176, part: "Group D", category: "Skin & Fascia", en: "The root of the nail is the surface of the skin covered by the nail.", ar: "جذر الظفر هو سطح الجلد المغطى بالظفر.", options: ["True", "False"], correct: 1, explanation: "جذر الظفر جزء مخفي تحت الجلد (الطية الظفرية)، وليس السطح المغطى بالظفر."},
+            {id: 177, part: "Group D", category: "Skin & Fascia", en: "The deep fascia is very thin in the palms and soles.", ar: "اللفافة العميقة رقيقة جداً في راحة اليد وباطن القدم.", options: ["True", "False"], correct: 1, explanation: "اللفافة العميقة في الكف والقدم تكون سميكة وقوية وليست رقيقة."},
+            {id: 178, part: "Group D", category: "Skeleton", en: "The sternum articulate with the upper 7 ribs.", ar: "عظم القص يتصل مع السبعة أضلاع العلوية.", options: ["True", "False"], correct: 0, explanation: "القص يتصل مباشرة مع الغضاريف الضلعية للأضلاع من 1 إلى 7."},
+            {id: 179, part: "Group D", category: "Joints", en: "Joints are meeting of two or more bones where movements must occur.", ar: "المفاصل هي التقاء عظمتين أو أكثر حيث يجب أن تحدث حركة دائماً.", options: ["True", "False"], correct: 1, explanation: "بعض المفاصل ثابتة أو بحركة بسيطة جداً، لذلك ليست كل المفاصل متحركة دائماً."},
+            {id: 180, part: "Group D", category: "Anatomical Position", en: "The thumb is the most medial finger.", ar: "الإبهام هو أصبع اليد الأكثر إنسية (أقرب للخط الأوسط).", options: ["True", "False"], correct: 1, explanation: "في الوضعية التشريحية، الإبهام هو الأكثر وحشية (lateral) وليس إنسياً."},
+            {id: 181, part: "Group D", category: "Upper Limb", en: "Each toe has three phalanges except the big toe which has two phalanges.", ar: "كل إصبع قدم له ثلاث سلاميات ما عدا الإصبع الكبير له سلاميتان.", options: ["True", "False"], correct: 0, explanation: "الإصبع الكبير للقدم له سلاميتان فقط، والباقي ثلاث سلاميات."},
+            {id: 182, part: "Group D", category: "Biliary System", en: "The common bile duct is formed by the union of the cystic duct and common hepatic duct.", ar: "القناة الصفراوية المشتركة تتكون من اتحاد القناة المرارية والقناة الكبدية المشتركة.", options: ["True", "False"], correct: 0, explanation: "القناة الصفراوية المشتركة = القناة الكبدية المشتركة + القناة المرارية."},
+            {id: 183, part: "Group D", category: "CNS", en: "The brain stem is formed of midbrain, pons and cerebellum.", ar: "جذع المخ يتكون من الدماغ الأوسط والجسر والمخيخ.", options: ["True", "False"], correct: 1, explanation: "جذع الدماغ يتكون من: midbrain + pons + medulla، أما المخيخ فليس جزءاً من جذع الدماغ."},
+            {id: 184, part: "Group D", category: "Vertebral Column", en: "The number of cervical vertebrae is 5.", ar: "عدد الفقرات العنقية هو 5.", options: ["True", "False"], correct: 1, explanation: "عدد الفقرات العنقية هو 7 وليس 5."},
+            {id: 185, part: "Group D", category: "Nervous System", en: "The number of cranial nerves is 31.", ar: "عدد الأعصاب القحفية هو 31.", options: ["True", "False"], correct: 1, explanation: "عدد الأعصاب القحفية هو 12، أما 31 فهو عدد الأعصاب الشوكية."},
+            {id: 186, part: "Group D", category: "Nervous System", en: "The number of cervical nerves is 8.", ar: "عدد الأعصاب العنقية هو 8.", options: ["True", "False"], correct: 0, explanation: "يوجد 8 أزواج من الأعصاب العنقية (C1–C8)."},
+            {id: 187, part: "Group D", category: "Respiratory System", en: "The trachea starts as a continuation of larynx at the level of C6.", ar: "تبدأ القصبة الهوائية كامتداد للحنجرة عند مستوى الفقرة C6.", options: ["True", "False"], correct: 0, explanation: "القصبة الهوائية تبدأ عند مستوى C6 تقريباً كامتداد للحنجرة."},
+            {id: 188, part: "Group D", category: "Esophagus", en: "The esophagus separates the trachea from the vertebral column.", ar: "المريء يفصل القصبة الهوائية عن العمود الفقري.", options: ["True", "False"], correct: 0, explanation: "المريء يقع خلف القصبة الهوائية وأمام العمود الفقري، فيفصل بينهما."},
+            {id: 189, part: "Group D", category: "Lungs", en: "The apex of the lung extends above the first rib.", ar: "قمة الرئة تمتد أعلى الضلع الأول.", options: ["True", "False"], correct: 0, explanation: "قمة الرئة تمتد قليلاً أعلى مستوى الضلع الأول داخل الرقبة."},
+            {id: 190, part: "Group D", category: "Lungs", en: "The base of the lung is directed downwards and rests on the diaphragm.", ar: "قاعدة الرئة تتجه لأسفل وتستقر فوق الحجاب الحاجز.", options: ["True", "False"], correct: 0, explanation: "قاعدة الرئة ترتكز فوق الحجاب الحاجز وتتجه لأسفل."},
+            {id: 191, part: "Group D", category: "Lungs", en: "The right lung has three lobes.", ar: "الرئة اليمنى لها ثلاث فصوص.", options: ["True", "False"], correct: 0, explanation: "الرئة اليمنى مكونة من ثلاث فصوص؛ العلوى والوسطى والسفلى."},
+            {id: 192, part: "Group D", category: "Lungs", en: "The right bronchus is shorter and wider than the left one.", ar: "الشعب الهوائية اليمنى أقصر وأعرض من اليسرى.", options: ["True", "False"], correct: 0, explanation: "الشعبة اليمنى أقصر وأوسع وتميل أكثر رأسياً من اليسرى."},
+            {id: 193, part: "Group D", category: "Liver & Kidneys", en: "The liver lies anterior to the left kidney.", ar: "الكبد يقع أمام الكلية اليسرى.", options: ["True", "False"], correct: 1, explanation: "الكبد يقع أساساً أمام الكلية اليمنى، وليس اليسرى."},
+            {id: 194, part: "Group D", category: "Pelvic Organs (Male)", en: "The urinary bladder lies anterior to the rectum in males.", ar: "المثانة البولية تقع أمام المستقيم في الذكور.", options: ["True", "False"], correct: 0, explanation: "في الذكر، المثانة أمام المستقيم وبينهما البروستاتا والحويصلات المنوية."},
+            {id: 195, part: "Group D", category: "Pelvic Organs (Female)", en: "The rectum lies posterior to the urinary bladder in females.", ar: "المستقيم يقع خلف المثانة البولية في الإناث.", options: ["True", "False"], correct: 0, explanation: "في الأنثى، المستقيم يقع خلف الرحم والمثانة، أي خلف المثانة أيضاً."},
+            {id: 196, part: "Group D", category: "Urethra", en: "Female urethra is longer than male urethra.", ar: "مجرى البول الأنثوي أطول من مجرى البول الذكري.", options: ["True", "False"], correct: 1, explanation: "مجرى البول الذكري أطول بكثير (حوالي 20 سم) من الأنثوي (3–4 سم)."},
+            {id: 197, part: "Group D", category: "Pancreas", en: "The pancreas is an endocrine and exocrine gland.", ar: "البنكرياس غدة صماء وخارجية الإفراز.", options: ["True", "False"], correct: 0, explanation: "البنكرياس يفرز هرمونات للدم (صماء) وإنزيمات للهضم (خارجية الإفراز)."},
+            {id: 198, part: "Group D", category: "Biliary System", en: "The common bile duct is formed by the union of right and left hepatic ducts.", ar: "القناة الصفراوية المشتركة تتكون من اتحاد القناتين الكبديتين اليمنى واليسرى.", options: ["True", "False"], correct: 1, explanation: "القناتان الكبديتان اليمنى واليسرى تتحدان لتكوين القناة الكبدية المشتركة، التي تتحد مع القناة المرارية لتكوين القناة الصفراوية المشتركة."},
+            {id: 199, part: "Group D", category: "Stomach Bed", en: "The stomach bed contains the liver.", ar: "فراش المعدة يحتوي على الكبد.", options: ["True", "False"], correct: 1, explanation: "فراش المعدة يحتوي على الطحال والكلية اليسرى والغدة الكظرية اليسرى والبنكرياس وجزء من القولون، وليس الكبد."},
+            {id: 200, part: "Group D", category: "Teeth", en: "The number of temporary teeth is 20 (10 in each jaw).", ar: "عدد الأسنان المؤقتة هو 20 (10 في كل فك).", options: ["True", "False"], correct: 0, explanation: "الأسنان اللبنية 20 سن، 10 في كل فك."},
+            {id: 201, part: "Group D", category: "Heart", en: "The apex of the heart is formed by right and left ventricles.", ar: "قمة القلب تتكون من البطين الأيمن والأيسر معاً.", options: ["True", "False"], correct: 1, explanation: "قمة القلب تتكون أساساً من البطين الأيسر فقط."},
+            {id: 202, part: "Group D", category: "Arteries", en: "Most arteries contain valves.", ar: "معظم الشرايين تحتوي على صمامات.", options: ["True", "False"], correct: 1, explanation: "الصمامات توجد غالباً في الأوردة، أما الشرايين فغالباً لا تحتوي على صمامات."},
+            {id: 203, part: "Group D", category: "Veins", en: "All veins carry non-oxygenated blood.", ar: "كل الأوردة تحمل دماً غير مؤكسد.", options: ["True", "False"], correct: 1, explanation: "الأوردة الرئوية تحمل دماً مؤكسداً، لذلك ليست كل الأوردة غير مؤكسدة."},
+            {id: 204, part: "Group D", category: "Capillaries", en: "Capillaries are small vessels connecting the arterioles together.", ar: "الشعيرات الدموية أوعية صغيرة تصل بين الشريينات ببعضها.", options: ["True", "False"], correct: 1, explanation: "الشعيرات الدموية تصل بين الشريينات والأوريدات، وليست بين الشريينات فقط."}
+
+        ]; 
+
+
+        // State management
+        let currentFilter = 'all';
+        let searchTerm = '';
+        const answeredQuestions = {};
+        const correctAnswers = {};
+
+        // Initialize the app
+        function init() {
+            updateStats();
+            renderQuestions();
+            setupEventListeners();
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                searchTerm = e.target.value.toLowerCase();
+                renderQuestions();
+            });
+
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    currentFilter = e.target.dataset.filter;
+                    renderQuestions();
+                });
+            });
+        }
+
+        // Filter questions
+        function getFilteredQuestions() {
+            return allQuestions.filter(q => {
+                const matchesGroup = currentFilter === 'all' || q.part === currentFilter;
+                const matchesSearch = searchTerm === '' || 
+                    q.en.toLowerCase().includes(searchTerm) ||
+                    q.ar.toLowerCase().includes(searchTerm) ||
+                    q.category.toLowerCase().includes(searchTerm) ||
+                    q.part.toLowerCase().includes(searchTerm);
+                return matchesGroup && matchesSearch;
+            });
+        }
+
+        // Render questions
+        function renderQuestions() {
+            const container = document.getElementById('questionsContainer');
+            const filtered = getFilteredQuestions();
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="no-questions">لا توجد أسئلة تطابق البحث / No questions match your search</div>';
+                return;
+            }
+
+            container.innerHTML = filtered.map(q => createQuestionCard(q)).join('');
+            attachOptionListeners();
+        }
+
+        // Create question card HTML
+        function createQuestionCard(q) {
+            const isAnswered = answeredQuestions[q.id] !== undefined;
+            const selectedAnswer = answeredQuestions[q.id];
+            const isCorrect = correctAnswers[q.id];
+
+            return `
+                <div class="question-card ${isAnswered ? 'answered' : ''}">
+                    <div class="question-number">${q.id}</div>
+                    <div class="question-meta">${q.part} • ${q.category}</div>
+                    <div class="question-text-en">${q.en}</div>
+                    <div class="question-text-ar">${q.ar}</div>
+                    <div class="options-grid">
+                        ${q.options.map((opt, idx) => {
+                            let classes = 'option';
+                            if (isAnswered) {
+                                classes += ' disabled';
+                                if (idx === q.correct) classes += ' correct';
+                                if (idx === selectedAnswer && idx !== q.correct) classes += ' incorrect';
+                            }
+                            return `<button class="${classes}" data-question="${q.id}" data-option="${idx}">${opt}</button>`;
+                        }).join('')}
+                    </div>
+                    ${isAnswered ? `
+                        <div class="result-message ${isCorrect ? 'correct-msg' : 'incorrect-msg'}">
+                            ${isCorrect ? '✓ صحيح / Correct!' : '✗ خطأ / Incorrect'}
+                        </div>
+                        <div class="explanation-box show">
+                            <div class="explanation-label">التفسير / Explanation:</div>
+                            <div class="explanation-text">${q.explanation}</div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        // Attach option listeners
+        function attachOptionListeners() {
+            document.querySelectorAll('.option:not(.disabled)').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const qId = parseInt(e.target.dataset.question);
+                    const optIdx = parseInt(e.target.dataset.option);
+                    const question = allQuestions.find(q => q.id === qId);
+
+                    answeredQuestions[qId] = optIdx;
+                    correctAnswers[qId] = optIdx === question.correct;
+                    
+                    updateStats();
+                    renderQuestions();
+                });
+            });
+        }
+
+        // Update statistics
+        function updateStats() {
+            const total = allQuestions.length;
+            const answered = Object.keys(answeredQuestions).length;
+            const correct = Object.values(correctAnswers).filter(v => v).length;
+            const successRate = answered > 0 ? Math.round((correct / answered) * 100) : 0;
+
+            document.getElementById('totalQuestions').textContent = total;
+            document.getElementById('answeredCount').textContent = answered;
+            document.getElementById('correctCount').textContent = correct;
+            document.getElementById('successRate').textContent = successRate + '%';
+        }
+
+        // Start the app
+        init();
+    </script>
+</body>
+</html>
